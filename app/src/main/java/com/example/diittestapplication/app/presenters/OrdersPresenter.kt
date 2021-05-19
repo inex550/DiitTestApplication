@@ -13,12 +13,9 @@ class OrdersPresenter(
     private val ordersView: OrdersView
 ) {
 
-    init {
-        ordersView.showLoading()
-        loadOrders()
-    }
-
     fun loadOrders() {
+        ordersView.showLoading()
+
         HoffApi.apiService.loadOrders()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

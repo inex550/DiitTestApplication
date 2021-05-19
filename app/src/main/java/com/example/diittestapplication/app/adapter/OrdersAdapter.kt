@@ -1,44 +1,49 @@
 package com.example.diittestapplication.app.adapter
 
-import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
-import com.example.diittestapplication.R
 import com.example.diittestapplication.databinding.OrdersListItemBinding
 import com.example.diittestapplication.models.Order
-import java.text.SimpleDateFormat
-import java.util.*
+import com.example.diittestapplication.utils.colorFromStatus
+import com.example.diittestapplication.utils.format
+import com.example.diittestapplication.utils.timeToFormatedString
 
-class OrdersAdapter: RecyclerView.Adapter<OrdersAdapter.ViewHolder>() {
-
-    val sdf = SimpleDateFormat("от dd MMMM yyyy, hh:mm", Locale("ru"))
+class OrdersAdapter(
+        private val listener: OrderSelectListener
+): RecyclerView.Adapter<OrdersAdapter.ViewHolder>() {
 
     inner class ViewHolder(
         private val binding: OrdersListItemBinding
     ): RecyclerView.ViewHolder(binding.root) {
 
+        init {
+            binding.selectBtn.setOnClickListener {
+                val order = orders[adapterPosition]
+                listener.onOrderSelected(order)
+            }
+        }
+
         fun bind(order: Order) {
             binding.numberTv.text = "№ ${order.number}"
-            binding.dateTv.text = sdf.format(Date(order.datetime))
+            binding.dateTv.text = order.datetime.timeToFormatedString()
             binding.deliveryIv.load(order.delivery.icon)
             binding.deliveryTv.text = order.delivery.name
             binding.statusTv.text = order.status.name
 
-            val statusColor = when(order.status.id) {
-                2 -> R.color.green
-                7 -> R.color.green
-                8 -> R.color.red
-                else -> R.color.gray
-            }
+            val statusColor = order.status.id.colorFromStatus()
 
             binding.statusTv.setTextColor(ContextCompat.getColor(binding.root.context, statusColor))
             binding.statusSiv.setImageResource(statusColor)
 
-            binding.priceTv.text = "${order.sum} ₽"
+            binding.priceTv.text = "${order.sum.format()} ₽"
         }
+    }
+
+    interface OrderSelectListener {
+        fun onOrderSelected(order: Order)
     }
 
 

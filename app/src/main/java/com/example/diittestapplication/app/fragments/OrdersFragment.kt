@@ -8,18 +8,22 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.diittestapplication.R
+import com.example.diittestapplication.app.App
+import com.example.diittestapplication.app.activities.MainActivity
 import com.example.diittestapplication.app.adapter.OrdersAdapter
 import com.example.diittestapplication.app.presenters.OrdersPresenter
+import com.example.diittestapplication.app.screens.Screens
 import com.example.diittestapplication.app.views.OrdersView
 import com.example.diittestapplication.databinding.FragmentOrdersBinding
 import com.example.diittestapplication.models.Order
 
-class OrdersFragment: Fragment(), OrdersView {
+class OrdersFragment: Fragment(), OrdersView, OrdersAdapter.OrderSelectListener {
 
     private var _binding: FragmentOrdersBinding? = null
     private val binding: FragmentOrdersBinding get() = _binding!!
 
-    private val ordersAdapter = OrdersAdapter()
+    private val ordersAdapter = OrdersAdapter(this)
 
     private lateinit var presenter: OrdersPresenter
 
@@ -30,10 +34,15 @@ class OrdersFragment: Fragment(), OrdersView {
     ): View {
         _binding = FragmentOrdersBinding.inflate(inflater, container, false)
 
+        (requireActivity() as MainActivity).updateTitle("Мои заказы")
+
         presenter = OrdersPresenter(this)
 
         binding.ordersListRv.layoutManager = LinearLayoutManager(requireContext())
         binding.ordersListRv.adapter = ordersAdapter
+
+        if (ordersAdapter.orders.isEmpty())
+            presenter.loadOrders()
 
         return binding.root
     }
@@ -54,8 +63,13 @@ class OrdersFragment: Fragment(), OrdersView {
         ordersAdapter.orders = orders
     }
 
+    override fun onOrderSelected(order: Order) {
+        App.INSTANCE.router.navigateTo(Screens.orderInfoScreen(order))
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+
 }
