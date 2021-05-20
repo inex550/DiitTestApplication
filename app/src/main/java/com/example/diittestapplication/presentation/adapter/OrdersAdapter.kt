@@ -4,11 +4,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
 import com.example.diittestapplication.databinding.OrdersListItemBinding
 import com.example.diittestapplication.domain.models.Order
 import com.example.diittestapplication.utils.colorFromStatus
 import com.example.diittestapplication.utils.format
-import com.example.diittestapplication.utils.timeToFormatedString
 
 class OrdersAdapter(
         private val listener: OrderSelectListener
@@ -27,7 +27,7 @@ class OrdersAdapter(
 
         fun bind(order: Order) {
             binding.numberTv.text = "№ ${order.number}"
-            binding.dateTv.text = order.datetime.timeToFormatedString()
+            binding.dateTv.text = order.date.format()
             binding.deliveryIv.load(order.delivery.icon)
             binding.deliveryTv.text = order.delivery.name
             binding.statusTv.text = order.status.name

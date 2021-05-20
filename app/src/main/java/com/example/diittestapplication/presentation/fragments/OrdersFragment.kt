@@ -15,6 +15,7 @@ import com.example.diittestapplication.presentation.screens.Screens
 import com.example.diittestapplication.presentation.views.OrdersView
 import com.example.diittestapplication.databinding.FragmentOrdersBinding
 import com.example.diittestapplication.domain.models.Order
+import javax.inject.Inject
 
 class OrdersFragment: Fragment(), OrdersView, OrdersAdapter.OrderSelectListener {
 
@@ -23,7 +24,13 @@ class OrdersFragment: Fragment(), OrdersView, OrdersAdapter.OrderSelectListener 
 
     private val ordersAdapter = OrdersAdapter(this)
 
-    private lateinit var presenter: OrdersPresenter
+    @Inject
+    lateinit var presenter: OrdersPresenter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        App.INSTANCE.appComponent.inject(this)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,7 +41,7 @@ class OrdersFragment: Fragment(), OrdersView, OrdersAdapter.OrderSelectListener 
 
         (requireActivity() as MainActivity).updateTitle("Мои заказы")
 
-        presenter = OrdersPresenter(this)
+        presenter.view = this
 
         binding.ordersListRv.layoutManager = LinearLayoutManager(requireContext())
         binding.ordersListRv.adapter = ordersAdapter

@@ -3,30 +3,30 @@ package com.example.diittestapplication.presentation.presenters
 import com.example.diittestapplication.presentation.views.OrderInfoView
 import com.example.diittestapplication.domain.models.OrderInfo
 import com.example.diittestapplication.data.network.HoffApi
+import com.example.diittestapplication.domain.interactors.OrderInfoInteractor
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
+import javax.inject.Inject
 
-class OrderInfoPresenter(
-        private val orderInfoView: OrderInfoView
+class OrderInfoPresenter @Inject constructor(
+    private val interactor: OrderInfoInteractor
 ) {
-    init {
-        orderInfoView.showLoading()
-    }
+    lateinit var view: OrderInfoView
 
     fun loadOrderInfo(orderId: String) {
-        HoffApi.apiService.loadOrderInfo(orderId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        view.showLoading()
+
+        interactor.getOrderInfo(orderId)
                 .subscribe(object : DisposableSingleObserver<OrderInfo>() {
                     override fun onSuccess(orderInfo: OrderInfo) {
-                        orderInfoView.hideLoading()
+                        view.hideLoading()
                         showOrderInfo(orderInfo)
                     }
 
                     override fun onError(e: Throwable) {
-                        orderInfoView.hideLoading()
-                        orderInfoView.showLoadingError(e.message ?: "Unknown error")
+                        view.hideLoading()
+                        view.showLoadingError(e.message ?: "Unknown error")
                     }
                 })
 
@@ -34,21 +34,21 @@ class OrderInfoPresenter(
     }
 
     fun showOrderInfo(orderInfo: OrderInfo) {
-        orderInfoView.showContent()
+        view.showContent()
 
-        orderInfoView.showTopOrderInfo()
+        view.showTopOrderInfo()
 
         if (orderInfo.deliveryTime?.data != null)
-            orderInfoView.showDeliveryTime(orderInfo.deliveryTime)
+            view.showDeliveryTime(orderInfo.deliveryTime)
 
-        orderInfoView.showAddress(orderInfo.address)
+        view.showAddress(orderInfo.address)
 
-        orderInfoView.showOtherCenterInfo(orderInfo)
+        view.showOtherCenterInfo(orderInfo)
 
-        orderInfoView.showOrderSum(orderInfo.amount)
+        view.showOrderSum(orderInfo.amount)
 
-        orderInfoView.showServices(orderInfo.services)
+        view.showServices(orderInfo.services)
 
-        orderInfoView.showOrderItems(orderInfo.items)
+        view.showOrderItems(orderInfo.items)
     }
 }

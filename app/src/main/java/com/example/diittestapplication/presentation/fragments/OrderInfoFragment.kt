@@ -1,5 +1,6 @@
 package com.example.diittestapplication.presentation.fragments
 
+import android.app.Application
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,9 +17,12 @@ import com.example.diittestapplication.presentation.presenters.OrderInfoPresente
 import com.example.diittestapplication.presentation.views.OrderInfoView
 import com.example.diittestapplication.databinding.FragmentOrderInfoBinding
 import com.example.diittestapplication.domain.models.*
+import com.example.diittestapplication.presentation.App
 import com.example.diittestapplication.utils.colorFromStatus
+import com.example.diittestapplication.utils.format
 import com.example.diittestapplication.utils.pluralItemsCount
 import com.example.diittestapplication.utils.timeToFormatedString
+import javax.inject.Inject
 
 class OrderInfoFragment(
         private val order: Order
@@ -27,17 +31,21 @@ class OrderInfoFragment(
     private var _binding: FragmentOrderInfoBinding? = null
     private val binding: FragmentOrderInfoBinding get() = _binding!!
 
-    private lateinit var presenter: OrderInfoPresenter
+    @Inject
+    lateinit var presenter: OrderInfoPresenter
 
     private val servicesAdapter = ServicesAdapter()
     private val orderItemsAdapter = OrderItemsAdapter()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentOrderInfoBinding.inflate(inflater, container, false)
+
+        App.INSTANCE.appComponent.inject(this)
 
         (requireActivity() as MainActivity).updateTitle(order.number)
 
-        presenter = OrderInfoPresenter(this)
+        presenter.view = this
+
         presenter.loadOrderInfo(order.id)
 
         val dividerItemDecoration = DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
@@ -63,7 +71,7 @@ class OrderInfoFragment(
     }
 
     override fun showTopOrderInfo() {
-        binding.orderDateTv.text = order.datetime.timeToFormatedString()
+        binding.orderDateTv.text = order.date.format()
         binding.statusTv.text = order.status.name
         binding.statusTv.setTextColor(ContextCompat.getColor(requireContext(), order.status.id.colorFromStatus()))
         binding.deliveryTv.text = order.delivery.name

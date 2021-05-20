@@ -2,7 +2,6 @@ package com.example.diittestapplication.data.network
 
 import com.example.diittestapplication.data.models.OrdersNet
 import com.example.diittestapplication.domain.models.OrderInfo
-import com.example.diittestapplication.domain.models.Orders
 import io.reactivex.Single
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory

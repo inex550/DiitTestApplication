@@ -3,6 +3,7 @@ package com.example.diittestapplication.presentation.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
 import com.example.diittestapplication.databinding.ServicesListItemBinding
 import com.example.diittestapplication.domain.models.Service
 
