@@ -10,9 +10,9 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:name=".app.App"
+        android:name=".presentation.App"
         android:theme="@style/Theme.DiitTestApplication">
-        <activity android:name=".app.activities.MainActivity">
+        <activity android:name=".presentation.activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
