@@ -1,6 +1,5 @@
 package com.example.diittestapplication.presentation.fragments
 
-import android.app.Application
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,9 +9,10 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.diittestapplication.R
 import com.example.diittestapplication.presentation.activities.MainActivity
-import com.example.diittestapplication.presentation.adapter.OrderItemsAdapter
-import com.example.diittestapplication.presentation.adapter.ServicesAdapter
+import com.example.diittestapplication.presentation.adapters.OrderItemsAdapter
+import com.example.diittestapplication.presentation.adapters.ServicesAdapter
 import com.example.diittestapplication.presentation.presenters.OrderInfoPresenter
 import com.example.diittestapplication.presentation.views.OrderInfoView
 import com.example.diittestapplication.databinding.FragmentOrderInfoBinding
@@ -20,13 +20,9 @@ import com.example.diittestapplication.domain.models.*
 import com.example.diittestapplication.presentation.App
 import com.example.diittestapplication.utils.colorFromStatus
 import com.example.diittestapplication.utils.format
-import com.example.diittestapplication.utils.pluralItemsCount
-import com.example.diittestapplication.utils.timeToFormatedString
 import javax.inject.Inject
 
-class OrderInfoFragment(
-        private val order: Order
-): Fragment(), OrderInfoView {
+class OrderInfoFragment: Fragment(), OrderInfoView {
 
     private var _binding: FragmentOrderInfoBinding? = null
     private val binding: FragmentOrderInfoBinding get() = _binding!!
@@ -37,28 +33,31 @@ class OrderInfoFragment(
     private val servicesAdapter = ServicesAdapter()
     private val orderItemsAdapter = OrderItemsAdapter()
 
+    lateinit var order: Order
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentOrderInfoBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         App.INSTANCE.appComponent.inject(this)
 
-        (requireActivity() as MainActivity).updateTitle(order.number)
+        order = arguments!!.getSerializable("order") as Order
 
-        presenter.view = this
+        (requireActivity() as MainActivity).updateTitle(order.number)
 
         presenter.loadOrderInfo(order.id)
 
         val dividerItemDecoration = DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
 
         binding.servicesListRv.addItemDecoration(dividerItemDecoration)
-        binding.servicesListRv.layoutManager = LinearLayoutManager(requireContext())
         binding.servicesListRv.adapter = servicesAdapter
 
         binding.itemsListRv.addItemDecoration(dividerItemDecoration)
-        binding.itemsListRv.layoutManager = LinearLayoutManager(requireContext())
         binding.itemsListRv.adapter = orderItemsAdapter
-
-        return binding.root
     }
 
     override fun showContent() {
@@ -110,12 +109,12 @@ class OrderInfoFragment(
         if (services == null || services.isEmpty())
             binding.servicesTitle.visibility = View.GONE
         else
-            servicesAdapter.services = services
+            servicesAdapter.setServices(services)
     }
 
     override fun showOrderItems(items: List<OrderItem>) {
-        binding.itemsCountTv.text = items.size.pluralItemsCount()
-        orderItemsAdapter.items = items
+        binding.itemsCountTv.text = resources.getQuantityString(R.plurals.items_count_plurals, items.size)
+        orderItemsAdapter.setItems(items)
     }
 
     override fun showLoading() {

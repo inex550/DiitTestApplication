@@ -302,6 +302,7 @@
                 android:layout_height="wrap_content"
                 android:background="@color/white"
                 tools:listitem="@layout/services_list_item"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:itemCount="3"/>
 
             <TextView
@@ -442,6 +443,7 @@
                 android:id="@+id/items_list_rv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/order_items_list_item"
                 tools:itemCount="3"/>
 

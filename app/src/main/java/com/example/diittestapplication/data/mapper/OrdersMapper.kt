@@ -3,8 +3,9 @@ package com.example.diittestapplication.data.mapper
 import com.example.diittestapplication.data.models.OrdersNet
 import com.example.diittestapplication.domain.models.Order
 import java.util.*
+import javax.inject.Inject
 
-class OrdersMapper {
+class OrdersMapper  @Inject constructor(){
 
     fun map(item: OrdersNet) =
         item.items.map {

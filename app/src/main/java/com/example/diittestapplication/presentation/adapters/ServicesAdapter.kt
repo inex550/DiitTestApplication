@@ -1,4 +1,4 @@
-package com.example.diittestapplication.presentation.adapter
+package com.example.diittestapplication.presentation.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -14,27 +14,32 @@ class ServicesAdapter: RecyclerView.Adapter<ServicesAdapter.ViewHolder>() {
     ): RecyclerView.ViewHolder(binding.root) {
 
         fun bind(service: Service) {
-            binding.iconIv.load(service.icon)
-            binding.nameTv.text = service.name
-            binding.priceTv.text = service.price.toString()
+            with (binding) {
+                iconIv.load(service.icon)
+                nameTv.text = service.name
+                priceTv.text = service.price.toString()
+            }
         }
     }
 
-    var services = listOf<Service>()
-        set(value) {
-            field = value
-            notifyDataSetChanged()
+    private val services by lazy {
+        arrayListOf<Service>()
+    }
+
+    fun setServices(items: List<Service>) {
+        services.apply {
+            clear()
+            addAll(items)
         }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
-        val binding = ServicesListItemBinding.inflate(inflater, parent, false)
-        return ViewHolder(binding)
+        notifyDataSetChanged()
     }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+        ViewHolder(ServicesListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val service = services[position]
-        holder.bind(service)
+        holder.bind(services[position])
     }
 
     override fun getItemCount(): Int = services.size

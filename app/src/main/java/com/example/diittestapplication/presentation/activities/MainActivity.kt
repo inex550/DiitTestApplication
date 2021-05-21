@@ -5,19 +5,28 @@ import android.os.Bundle
 import com.example.diittestapplication.R
 import com.example.diittestapplication.presentation.App
 import com.example.diittestapplication.presentation.screens.Screens
+import com.github.terrakok.cicerone.NavigatorHolder
+import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.androidx.AppNavigator
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
 
     private val navigator = AppNavigator(this, R.id.fragment_container_fl)
 
+    @Inject
+    lateinit var navigatorHolder: NavigatorHolder
+
+    @Inject
+    lateinit var router: Router
+
     override fun onResumeFragments() {
         super.onResumeFragments()
-        App.INSTANCE.navigatorHolder.setNavigator(navigator)
+        navigatorHolder.setNavigator(navigator)
     }
 
     override fun onPause() {
-        App.INSTANCE.navigatorHolder.removeNavigator()
+        navigatorHolder.removeNavigator()
         super.onPause()
     }
 
@@ -25,7 +34,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        App.INSTANCE.router.navigateTo(Screens.ordersScreen())
+        App.INSTANCE.appComponent.inject(this)
+
+        router.navigateTo(Screens.ordersScreen())
     }
 
     fun updateTitle(title: String) {

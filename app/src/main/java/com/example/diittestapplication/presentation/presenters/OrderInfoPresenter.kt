@@ -2,11 +2,8 @@ package com.example.diittestapplication.presentation.presenters
 
 import com.example.diittestapplication.presentation.views.OrderInfoView
 import com.example.diittestapplication.domain.models.OrderInfo
-import com.example.diittestapplication.data.network.HoffApi
 import com.example.diittestapplication.domain.interactors.OrderInfoInteractor
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.observers.DisposableSingleObserver
-import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class OrderInfoPresenter @Inject constructor(
@@ -18,19 +15,20 @@ class OrderInfoPresenter @Inject constructor(
         view.showLoading()
 
         interactor.getOrderInfo(orderId)
-                .subscribe(object : DisposableSingleObserver<OrderInfo>() {
-                    override fun onSuccess(orderInfo: OrderInfo) {
-                        view.hideLoading()
-                        showOrderInfo(orderInfo)
-                    }
+            .doOnSubscribe { view.showLoading() }
+            .doAfterTerminate { view.hideLoading() }
+            .subscribe(object : DisposableSingleObserver<OrderInfo>() {
 
-                    override fun onError(e: Throwable) {
-                        view.hideLoading()
-                        view.showLoadingError(e.message ?: "Unknown error")
-                    }
-                })
+                override fun onSuccess(orderInfo: OrderInfo) {
+                    view.hideLoading()
+                    showOrderInfo(orderInfo)
+                }
 
-
+                override fun onError(e: Throwable) {
+                    view.hideLoading()
+                    view.showLoadingError(e.message ?: "Unknown error")
+                }
+            })
     }
 
     fun showOrderInfo(orderInfo: OrderInfo) {

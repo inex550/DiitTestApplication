@@ -1,5 +1,6 @@
 package com.example.diittestapplication.domain.models
 
+import java.io.Serializable
 import java.util.*
 
 data class Order(
@@ -10,4 +11,4 @@ data class Order(
     val number: String,
     val phone: String,
     val sum: Int
-)
+): Serializable

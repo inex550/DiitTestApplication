@@ -7,14 +7,16 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.arellomobile.mvp.presenter.InjectPresenter
 import com.example.diittestapplication.presentation.App
 import com.example.diittestapplication.presentation.activities.MainActivity
-import com.example.diittestapplication.presentation.adapter.OrdersAdapter
+import com.example.diittestapplication.presentation.adapters.OrdersAdapter
 import com.example.diittestapplication.presentation.presenters.OrdersPresenter
 import com.example.diittestapplication.presentation.screens.Screens
 import com.example.diittestapplication.presentation.views.OrdersView
 import com.example.diittestapplication.databinding.FragmentOrdersBinding
 import com.example.diittestapplication.domain.models.Order
+import com.github.terrakok.cicerone.Router
 import javax.inject.Inject
 
 class OrdersFragment: Fragment(), OrdersView, OrdersAdapter.OrderSelectListener {
@@ -25,7 +27,11 @@ class OrdersFragment: Fragment(), OrdersView, OrdersAdapter.OrderSelectListener 
     private val ordersAdapter = OrdersAdapter(this)
 
     @Inject
+    @InjectPresenter
     lateinit var presenter: OrdersPresenter
+
+    @Inject
+    lateinit var router: Router
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,9 +47,6 @@ class OrdersFragment: Fragment(), OrdersView, OrdersAdapter.OrderSelectListener 
 
         (requireActivity() as MainActivity).updateTitle("Мои заказы")
 
-        presenter.view = this
-
-        binding.ordersListRv.layoutManager = LinearLayoutManager(requireContext())
         binding.ordersListRv.adapter = ordersAdapter
 
         if (ordersAdapter.orders.isEmpty())
@@ -65,11 +68,15 @@ class OrdersFragment: Fragment(), OrdersView, OrdersAdapter.OrderSelectListener 
     }
 
     override fun showOrders(orders: List<Order>) {
-        ordersAdapter.orders = orders
+        ordersAdapter.setOrders(orders)
     }
 
     override fun onOrderSelected(order: Order) {
-        App.INSTANCE.router.navigateTo(Screens.orderInfoScreen(order))
+        val bundle = Bundle().apply {
+            putSerializable("order", order)
+        }
+
+        router.navigateTo(Screens.orderInfoScreen(bundle))
     }
 
     override fun onDestroyView() {

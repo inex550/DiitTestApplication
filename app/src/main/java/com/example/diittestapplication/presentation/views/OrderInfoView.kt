@@ -1,8 +1,9 @@
 package com.example.diittestapplication.presentation.views
 
+import com.arellomobile.mvp.MvpView
 import com.example.diittestapplication.domain.models.*
 
-interface OrderInfoView: LoadingView {
+interface OrderInfoView: LoadingView, MvpView {
 
     fun showContent()
 

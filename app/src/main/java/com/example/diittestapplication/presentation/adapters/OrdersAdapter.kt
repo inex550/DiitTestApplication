@@ -1,4 +1,4 @@
-package com.example.diittestapplication.presentation.adapter
+package com.example.diittestapplication.presentation.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -26,18 +26,20 @@ class OrdersAdapter(
         }
 
         fun bind(order: Order) {
-            binding.numberTv.text = "№ ${order.number}"
-            binding.dateTv.text = order.date.format()
-            binding.deliveryIv.load(order.delivery.icon)
-            binding.deliveryTv.text = order.delivery.name
-            binding.statusTv.text = order.status.name
+            with (binding) {
+                numberTv.text = "№ ${order.number}"
+                dateTv.text = order.date.format()
+                deliveryIv.load(order.delivery.icon)
+                deliveryTv.text = order.delivery.name
+                statusTv.text = order.status.name
 
-            val statusColor = order.status.id.colorFromStatus()
+                val statusColor = order.status.id.colorFromStatus()
 
-            binding.statusTv.setTextColor(ContextCompat.getColor(binding.root.context, statusColor))
-            binding.statusSiv.setImageResource(statusColor)
+                statusTv.setTextColor(ContextCompat.getColor(binding.root.context, statusColor))
+                statusSiv.setImageResource(statusColor)
 
-            binding.priceTv.text = "${order.sum.format()} ₽"
+                priceTv.text = "${order.sum.format()} ₽"
+            }
         }
     }
 
@@ -46,21 +48,24 @@ class OrdersAdapter(
     }
 
 
-    var orders = listOf<Order>()
-        set(value) {
-            field = value
-            notifyDataSetChanged()
-        }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
-        val binding = OrdersListItemBinding.inflate(inflater, parent, false)
-        return ViewHolder(binding)
+    val orders by lazy {
+        arrayListOf<Order>()
     }
 
+    fun setOrders(items: List<Order>) {
+        orders.apply {
+            clear()
+            addAll(items)
+        }
+
+        notifyDataSetChanged()
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+        ViewHolder(OrdersListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val order = orders[position]
-        holder.bind(order)
+        holder.bind(orders[position])
     }
 
     override fun getItemCount(): Int = orders.size
