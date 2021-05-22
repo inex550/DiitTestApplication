@@ -3,6 +3,8 @@ package com.example.diittestapplication.di
 import com.example.diittestapplication.presentation.activities.MainActivity
 import com.example.diittestapplication.presentation.fragments.OrderInfoFragment
 import com.example.diittestapplication.presentation.fragments.OrdersFragment
+import com.example.diittestapplication.presentation.presenters.OrderInfoPresenter
+import com.example.diittestapplication.presentation.presenters.OrdersPresenter
 import dagger.Component
 import javax.inject.Singleton
 
@@ -22,4 +24,8 @@ interface ApplicationComponent {
     fun inject(ordersFragment: OrdersFragment)
 
     fun inject(orderInfoFragment: OrderInfoFragment)
+
+    fun inject(ordersPresenter: OrdersPresenter)
+
+    fun inject(orderInfoPresenter: OrderInfoPresenter)
 }

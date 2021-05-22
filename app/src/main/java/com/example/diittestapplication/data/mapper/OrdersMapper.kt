@@ -5,7 +5,7 @@ import com.example.diittestapplication.domain.models.Order
 import java.util.*
 import javax.inject.Inject
 
-class OrdersMapper  @Inject constructor(){
+class OrdersMapper  @Inject constructor() {
 
     fun map(item: OrdersNet) =
         item.items.map {

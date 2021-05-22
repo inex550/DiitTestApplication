@@ -5,10 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.arellomobile.mvp.MvpAppCompatFragment
+import com.arellomobile.mvp.presenter.InjectPresenter
 import com.example.diittestapplication.R
 import com.example.diittestapplication.presentation.activities.MainActivity
 import com.example.diittestapplication.presentation.adapters.OrderItemsAdapter
@@ -22,12 +24,12 @@ import com.example.diittestapplication.utils.colorFromStatus
 import com.example.diittestapplication.utils.format
 import javax.inject.Inject
 
-class OrderInfoFragment: Fragment(), OrderInfoView {
+class OrderInfoFragment: MvpAppCompatFragment(), OrderInfoView {
 
     private var _binding: FragmentOrderInfoBinding? = null
     private val binding: FragmentOrderInfoBinding get() = _binding!!
 
-    @Inject
+    @InjectPresenter
     lateinit var presenter: OrderInfoPresenter
 
     private val servicesAdapter = ServicesAdapter()

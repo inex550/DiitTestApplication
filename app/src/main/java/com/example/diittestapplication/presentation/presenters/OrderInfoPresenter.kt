@@ -1,52 +1,56 @@
 package com.example.diittestapplication.presentation.presenters
 
+import com.arellomobile.mvp.InjectViewState
 import com.example.diittestapplication.presentation.views.OrderInfoView
 import com.example.diittestapplication.domain.models.OrderInfo
 import com.example.diittestapplication.domain.interactors.OrderInfoInteractor
+import com.example.diittestapplication.presentation.App
 import io.reactivex.observers.DisposableSingleObserver
 import javax.inject.Inject
 
-class OrderInfoPresenter @Inject constructor(
-    private val interactor: OrderInfoInteractor
-) {
-    lateinit var view: OrderInfoView
+@InjectViewState
+class OrderInfoPresenter: BasePresenter<OrderInfoView>() {
 
-    fun loadOrderInfo(orderId: String) {
-        view.showLoading()
+    @Inject
+    lateinit var interactor: OrderInfoInteractor
 
-        interactor.getOrderInfo(orderId)
-            .doOnSubscribe { view.showLoading() }
-            .doAfterTerminate { view.hideLoading() }
-            .subscribe(object : DisposableSingleObserver<OrderInfo>() {
-
-                override fun onSuccess(orderInfo: OrderInfo) {
-                    view.hideLoading()
-                    showOrderInfo(orderInfo)
-                }
-
-                override fun onError(e: Throwable) {
-                    view.hideLoading()
-                    view.showLoadingError(e.message ?: "Unknown error")
-                }
-            })
+    init {
+        App.INSTANCE.appComponent.inject(this)
     }
 
-    fun showOrderInfo(orderInfo: OrderInfo) {
-        view.showContent()
+    fun loadOrderInfo(orderId: String) {
+        viewState.showLoading()
 
-        view.showTopOrderInfo()
+        subscriptions.add(
+            interactor.getOrderInfo(orderId)
+                .doOnSubscribe { viewState.showLoading() }
+                .doAfterTerminate { viewState.hideLoading() }
+                .doOnSuccess { orderInfo ->
+                    showOrderInfo(orderInfo)
+                }
+                .doOnError { e ->
+                    viewState.showLoadingError(e.message ?: "Unknown error")
+                }
+                .subscribe()
+        )
+    }
+
+    private fun showOrderInfo(orderInfo: OrderInfo) {
+        viewState.showContent()
+
+        viewState.showTopOrderInfo()
 
         if (orderInfo.deliveryTime?.data != null)
-            view.showDeliveryTime(orderInfo.deliveryTime)
+            viewState.showDeliveryTime(orderInfo.deliveryTime)
 
-        view.showAddress(orderInfo.address)
+        viewState.showAddress(orderInfo.address)
 
-        view.showOtherCenterInfo(orderInfo)
+        viewState.showOtherCenterInfo(orderInfo)
 
-        view.showOrderSum(orderInfo.amount)
+        viewState.showOrderSum(orderInfo.amount)
 
-        view.showServices(orderInfo.services)
+        viewState.showServices(orderInfo.services)
 
-        view.showOrderItems(orderInfo.items)
+        viewState.showOrderItems(orderInfo.items)
     }
 }

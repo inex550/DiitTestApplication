@@ -5,8 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
+import com.arellomobile.mvp.MvpAppCompatFragment
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.example.diittestapplication.presentation.App
 import com.example.diittestapplication.presentation.activities.MainActivity
@@ -19,14 +18,13 @@ import com.example.diittestapplication.domain.models.Order
 import com.github.terrakok.cicerone.Router
 import javax.inject.Inject
 
-class OrdersFragment: Fragment(), OrdersView, OrdersAdapter.OrderSelectListener {
+class OrdersFragment: MvpAppCompatFragment(), OrdersView, OrdersAdapter.OrderSelectListener {
 
     private var _binding: FragmentOrdersBinding? = null
     private val binding: FragmentOrdersBinding get() = _binding!!
 
     private val ordersAdapter = OrdersAdapter(this)
 
-    @Inject
     @InjectPresenter
     lateinit var presenter: OrdersPresenter
 
@@ -34,8 +32,8 @@ class OrdersFragment: Fragment(), OrdersView, OrdersAdapter.OrderSelectListener 
     lateinit var router: Router
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         App.INSTANCE.appComponent.inject(this)
+        super.onCreate(savedInstanceState)
     }
 
     override fun onCreateView(
@@ -44,6 +42,11 @@ class OrdersFragment: Fragment(), OrdersView, OrdersAdapter.OrderSelectListener 
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentOrdersBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         (requireActivity() as MainActivity).updateTitle("Мои заказы")
 
@@ -51,8 +54,6 @@ class OrdersFragment: Fragment(), OrdersView, OrdersAdapter.OrderSelectListener 
 
         if (ordersAdapter.orders.isEmpty())
             presenter.loadOrders()
-
-        return binding.root
     }
 
     override fun showLoading() {
