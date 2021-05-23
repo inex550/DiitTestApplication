@@ -10,14 +10,9 @@ import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
 @InjectViewState
-class OrdersPresenter: BasePresenter<OrdersView>() {
-
-    @Inject
-    lateinit var ordersInteractor: OrdersInteractor
-
-    init {
-        App.INSTANCE.appComponent.inject(this)
-    }
+class OrdersPresenter @Inject constructor(
+    private val ordersInteractor: OrdersInteractor
+): BasePresenter<OrdersView>() {
 
     fun loadOrders() {
         subscriptions.add(

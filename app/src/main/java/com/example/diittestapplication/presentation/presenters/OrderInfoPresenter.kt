@@ -9,14 +9,9 @@ import io.reactivex.observers.DisposableSingleObserver
 import javax.inject.Inject
 
 @InjectViewState
-class OrderInfoPresenter: BasePresenter<OrderInfoView>() {
-
-    @Inject
-    lateinit var interactor: OrderInfoInteractor
-
-    init {
-        App.INSTANCE.appComponent.inject(this)
-    }
+class OrderInfoPresenter @Inject constructor(
+        private val interactor: OrderInfoInteractor
+): BasePresenter<OrderInfoView>() {
 
     fun loadOrderInfo(orderId: String) {
         viewState.showLoading()

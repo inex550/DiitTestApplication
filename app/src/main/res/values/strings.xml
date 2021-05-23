@@ -3,8 +3,9 @@
 
     <plurals name="items_count_plurals">
         <item quantity="one">%1$d товар</item>
+        <item quantity="two">%1$d товара</item>
         <item quantity="few">%1$d товара</item>
         <item quantity="many">%1$d товаров</item>
-        <item quantity="other">%1$d товаров</item>
+        <item quantity="other">%1$d товара</item>
     </plurals>
 </resources>

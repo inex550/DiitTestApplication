@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.arellomobile.mvp.MvpAppCompatFragment
 import com.arellomobile.mvp.presenter.InjectPresenter
+import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.example.diittestapplication.presentation.App
 import com.example.diittestapplication.presentation.activities.MainActivity
 import com.example.diittestapplication.presentation.adapters.OrdersAdapter
@@ -25,8 +26,12 @@ class OrdersFragment: MvpAppCompatFragment(), OrdersView, OrdersAdapter.OrderSel
 
     private val ordersAdapter = OrdersAdapter(this)
 
+    @Inject
     @InjectPresenter
     lateinit var presenter: OrdersPresenter
+
+    @ProvidePresenter
+    fun providePresenter() = presenter
 
     @Inject
     lateinit var router: Router

@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.arellomobile.mvp.MvpAppCompatFragment
 import com.arellomobile.mvp.presenter.InjectPresenter
+import com.arellomobile.mvp.presenter.ProvidePresenter
 import com.example.diittestapplication.R
 import com.example.diittestapplication.presentation.activities.MainActivity
 import com.example.diittestapplication.presentation.adapters.OrderItemsAdapter
@@ -29,13 +30,22 @@ class OrderInfoFragment: MvpAppCompatFragment(), OrderInfoView {
     private var _binding: FragmentOrderInfoBinding? = null
     private val binding: FragmentOrderInfoBinding get() = _binding!!
 
+    @Inject
     @InjectPresenter
     lateinit var presenter: OrderInfoPresenter
+
+    @ProvidePresenter
+    fun providePresenter() = presenter
 
     private val servicesAdapter = ServicesAdapter()
     private val orderItemsAdapter = OrderItemsAdapter()
 
     lateinit var order: Order
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        App.INSTANCE.appComponent.inject(this)
+        super.onCreate(savedInstanceState)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentOrderInfoBinding.inflate(inflater, container, false)
@@ -44,8 +54,6 @@ class OrderInfoFragment: MvpAppCompatFragment(), OrderInfoView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        App.INSTANCE.appComponent.inject(this)
 
         order = arguments!!.getSerializable("order") as Order
 
@@ -115,7 +123,7 @@ class OrderInfoFragment: MvpAppCompatFragment(), OrderInfoView {
     }
 
     override fun showOrderItems(items: List<OrderItem>) {
-        binding.itemsCountTv.text = resources.getQuantityString(R.plurals.items_count_plurals, items.size)
+        binding.itemsCountTv.text = resources.getQuantityString(R.plurals.items_count_plurals, items.size, items.size)
         orderItemsAdapter.setItems(items)
     }
 

@@ -24,8 +24,4 @@ interface ApplicationComponent {
     fun inject(ordersFragment: OrdersFragment)
 
     fun inject(orderInfoFragment: OrderInfoFragment)
-
-    fun inject(ordersPresenter: OrdersPresenter)
-
-    fun inject(orderInfoPresenter: OrderInfoPresenter)
 }
