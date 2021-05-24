@@ -14,7 +14,6 @@ class OrderInfoPresenter @Inject constructor(
 ): BasePresenter<OrderInfoView>() {
 
     fun loadOrderInfo(orderId: String) {
-        viewState.showLoading()
 
         subscriptions.add(
             interactor.getOrderInfo(orderId)

@@ -23,6 +23,7 @@ import com.example.diittestapplication.domain.models.*
 import com.example.diittestapplication.presentation.App
 import com.example.diittestapplication.utils.colorFromStatus
 import com.example.diittestapplication.utils.format
+import com.github.terrakok.cicerone.Router
 import javax.inject.Inject
 
 class OrderInfoFragment: MvpAppCompatFragment(), OrderInfoView {
@@ -33,6 +34,9 @@ class OrderInfoFragment: MvpAppCompatFragment(), OrderInfoView {
     @Inject
     @InjectPresenter
     lateinit var presenter: OrderInfoPresenter
+
+    @Inject
+    lateinit var router: Router
 
     @ProvidePresenter
     fun providePresenter() = presenter
@@ -55,7 +59,15 @@ class OrderInfoFragment: MvpAppCompatFragment(), OrderInfoView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        order = arguments!!.getSerializable("order") as Order
+        with(arguments?.getSerializable("order") as? Order) {
+            if (this == null) {
+                router.exit()
+                Toast.makeText(requireContext(), "Нет Order-а в Bundle-е, нет экрана с информацией об Order-е. Всё просто", Toast.LENGTH_LONG).show()
+                return
+            }
+
+            order = this
+        }
 
         (requireActivity() as MainActivity).updateTitle(order.number)
 
@@ -96,9 +108,9 @@ class OrderInfoFragment: MvpAppCompatFragment(), OrderInfoView {
     }
 
     override fun showOtherCenterInfo(orderInfo: OrderInfo) {
-        binding.paymentTv.text = orderInfo.payment.name ?: ""
+        binding.paymentTv.text = orderInfo.payment.name.orEmpty()
         binding.bonusCardTv.text = orderInfo.bonusCard
-        binding.shopTv.text = orderInfo.shop.name ?: ""
+        binding.shopTv.text = orderInfo.shop.name.orEmpty()
     }
 
     override fun showOrderSum(amount: Amount) {
