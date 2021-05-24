@@ -75,8 +75,8 @@ class OrderInfoFragment: MvpAppCompatFragment(), OrderInfoView {
     }
 
     override fun showDeliveryTime(deliveryTime: DeliveryTime) {
-        binding.deliveryDateTv.text = deliveryTime.data!!.date
-        binding.deliveryTimeTv.text = deliveryTime.data.time
+        binding.deliveryDateTv.text = deliveryTime.data?.date.orEmpty()
+        binding.deliveryTimeTv.text = deliveryTime.data?.time.orEmpty()
     }
 
     override fun showTopOrderInfo() {

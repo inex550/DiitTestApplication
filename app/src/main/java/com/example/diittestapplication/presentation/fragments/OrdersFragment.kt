@@ -57,7 +57,7 @@ class OrdersFragment: MvpAppCompatFragment(), OrdersView, OrdersAdapter.OrderSel
 
         binding.ordersListRv.adapter = ordersAdapter
 
-        if (ordersAdapter.orders.isEmpty())
+        if (ordersAdapter.itemCount == 0)
             presenter.loadOrders()
     }
 

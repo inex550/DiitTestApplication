@@ -48,7 +48,7 @@ class OrdersAdapter(
     }
 
 
-    val orders by lazy {
+    private val orders by lazy {
         arrayListOf<Order>()
     }
 
